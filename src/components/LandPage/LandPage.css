@@ -1,0 +1,27 @@
+h1, h3{
+	font-weight: normal;
+}
+
+.buttoncolor{
+	background-color: rgb(255,48,0);
+}
+
+a{
+  text-decoration: none;
+}
+
+input{
+	background-color: rgb(255, 45, 0);
+}
+
+div{
+	-moz-osx-font-smoothing: grayscale;
+  backface-visibility: hidden;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                        supported by Chrome and Opera */
+}
