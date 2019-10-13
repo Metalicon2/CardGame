@@ -1,21 +1,25 @@
 import React from 'react';
 import './Select.css';
 
-const LandPage = () => {
+const numbers = [6,8,10,12,14,16,18,20];
+
+const Select = ({setCardAmount}) => {
+
+	const dropDown = numbers.map((item, i) => {
+	    return(
+	      <option key={i} value={item}>{item}</option>
+	    );
+  	});
+
 	return (
 		<div className='select-style'>
-			<select>
-			    <option className='option1' value="volvo">6</option>
-			    <option value="saab">8</option>
-			    <option value="mercedes">10</option>
-			    <option value="audi">12</option>
-			    <option className='option1' value="volvo">14</option>
-			    <option value="saab">16</option>
-			    <option value="mercedes">18</option>
-			    <option value="audi">20</option>
+			<select onChange={(event) => setCardAmount(event.target.value)} id="ddlViewBy">
+			    {
+					dropDown
+				}
 		  	</select>
 	  	</div>
 	);
 }
 
-export default LandPage;
+export default Select;

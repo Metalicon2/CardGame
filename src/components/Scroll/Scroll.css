@@ -1,0 +1,8 @@
+.scroll{
+	overflow: hidden;
+	padding: 10px;
+	display: block;
+	margin: auto;
+	width: 45%;
+	text-align: center;
+}
