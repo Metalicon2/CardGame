@@ -11,9 +11,8 @@ class App extends Component {
     this.state = {
       route: 'home',
       cardAmount: '6',
-      cardState: false,
-      cardID: null,
-      clicks: 0
+      cardItemArray: [],
+      cardState: false
     }
   }
 
@@ -25,10 +24,22 @@ class App extends Component {
     this.setState({cardAmount: amount});
   }
 
-  setCardState = (key) => {
+  setCardState = (item) => {
+    console.log(item);
     this.setState({cardState: true});
-    this.setState({cardID: key});
-    this.setState({clicks: this.state.clicks+1});
+    if(this.state.cardItemArray.length < 2){
+      this.setState(state => state.cardItemArray.push(item));
+      if(this.state.cardItemArray.length === 1){
+        /*if(this.state.cardItemArray[0].src === item.src){
+          alert('match');
+        }*/
+        setTimeout(() => 
+          {
+            this.setState({cardState: false}); 
+            this.setState({cardItemArray: []});
+          }, 2000);
+      }
+    }
   }
 
   render(){
@@ -36,9 +47,20 @@ class App extends Component {
       <div>
         <Menu />
         {
-          this.state.route === 'home' ? <LandPage setCardAmount={this.setCardAmount} onRouteChange={this.onRouteChange}/> : 
+          this.state.route === 'home' 
+          ? 
+          <LandPage 
+            setCardAmount={this.setCardAmount} 
+            onRouteChange={this.onRouteChange}
+          /> 
+          : 
           <Scroll>
-            <GamePage clicks={this.state.clicks} cardID={this.state.cardID} cardAmount={this.state.cardAmount} setCardState={this.setCardState} cardState={this.state.cardState}/>
+            <GamePage 
+              cardItemArray={this.state.cardItemArray}
+              cardAmount={this.state.cardAmount} 
+              setCardState={this.setCardState} 
+              cardState={this.state.cardState}
+            />
           </Scroll>
         }
       </div>

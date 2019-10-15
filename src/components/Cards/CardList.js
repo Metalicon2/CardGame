@@ -3,17 +3,15 @@ import {PicList} from './PicList';
 import Card from './Cards';
 import emptyCard from './pictures/emptyCard.png';
 
-let cardIdArray = [];
+const CardList = ({cardAmount, setCardState, cardState, cardItemArray}) => {
 
-const CardList = ({cardAmount, setCardState, cardState, cardID, clicks}) => {
+	console.log(cardItemArray);
+	console.log(cardState);
 
-	if(cardIdArray.length < 2 && cardID !== null){
-		cardIdArray.push(cardID);
-	}else{
-		cardIdArray = [];
+	const calc = (card) => {
+		let object = cardItemArray.filter(item => (item.id === card.id));
+		if(object.length > 0) return true;
 	}
-
-	console.log(cardIdArray);
 
 	return (
 		<div>
@@ -21,7 +19,7 @@ const CardList = ({cardAmount, setCardState, cardState, cardID, clicks}) => {
 			PicList.map((item, i) => {
 				if(i >= cardAmount){return;}
 				return(
-					cardState && cardIdArray.includes(item.id) ? 
+					cardState && cardItemArray[0].id === item.id ? 
 					<Card setCardState={setCardState} cardState={cardState} item={item} key={i}/>
 					:
 					<Card setCardState={setCardState} cardState={cardState} item={{src: emptyCard, id:item.id}} key={i}/>
