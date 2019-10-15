@@ -13,7 +13,7 @@ const Select = ({setCardAmount}) => {
 
 	return (
 		<div className='select-style'>
-			<select onChange={(event) => setCardAmount(event.target.value)} id="ddlViewBy">
+			<select onChange={(event) => setCardAmount(event.target.value)}>
 			    {
 					dropDown
 				}

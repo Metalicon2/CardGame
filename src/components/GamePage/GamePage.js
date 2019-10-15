@@ -2,7 +2,7 @@ import React from 'react';
 import './GamePage.css';
 import CardList from '../Cards/CardList';
 
-const GamePage = ({cardAmount}) => {
+const GamePage = ({cardAmount, setCardState, cardState, cardID, clicks}) => {
 	return (
 		<div>
 			<div className="container pt4 pb4">
@@ -10,7 +10,7 @@ const GamePage = ({cardAmount}) => {
 			  <div className='f6 gray'>Best:</div>
 			  <div><input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="button" value="RESTART"/></div>
 			</div>
-			<CardList cardAmount={cardAmount}/>
+			<CardList clicks={clicks} cardID={cardID} cardAmount={cardAmount} setCardState={setCardState} cardState={cardState}/>
 		</div>
 	);
 }

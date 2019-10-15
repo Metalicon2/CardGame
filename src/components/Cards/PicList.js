@@ -16,70 +16,70 @@ export const PicList = [
 	},
 	{
 		src: angular,
-		id: 1
-	},
-	{
-		src: d3,
 		id: 2
 	},
 	{
 		src: d3,
-		id: 2
-	},
-	{
-		src: jenkins,
 		id: 3
 	},
 	{
+		src: d3,
+		id: 4
+	},
+	{
 		src: jenkins,
-		id: 3
-	},
-	{
-		src: postcss,
-		id: 4
-	},
-	{
-		src: postcss,
-		id: 4
-	},
-	{
-		src: react,
 		id: 5
 	},
 	{
+		src: jenkins,
+		id: 6
+	},
+	{
+		src: postcss,
+		id: 7
+	},
+	{
+		src: postcss,
+		id: 8
+	},
+	{
 		src: react,
-		id: 5
-	},
-	{
-		src: redux,
-		id: 6
-	},
-	{
-		src: redux,
-		id: 6
-	},
-	{
-		src: sass,
-		id: 7
-	},
-	{
-		src: sass,
-		id: 7
-	},
-	{
-		src: ts,
-		id: 8
-	},
-	{
-		src: ts,
-		id: 8
-	},
-	{
-		src: webpack,
 		id: 9
 	},
 	{
+		src: react,
+		id: 10
+	},
+	{
+		src: redux,
+		id: 11
+	},
+	{
+		src: redux,
+		id: 12
+	},
+	{
+		src: sass,
+		id: 13
+	},
+	{
+		src: sass,
+		id: 14
+	},
+	{
+		src: ts,
+		id: 15
+	},
+	{
+		src: ts,
+		id: 16
+	},
+	{
 		src: webpack,
-		id: 9
+		id: 17
+	},
+	{
+		src: webpack,
+		id: 18
 	}
 ];

@@ -10,7 +10,10 @@ class App extends Component {
     super();
     this.state = {
       route: 'home',
-      cardAmount: '6'
+      cardAmount: '6',
+      cardState: false,
+      cardID: null,
+      clicks: 0
     }
   }
 
@@ -22,6 +25,12 @@ class App extends Component {
     this.setState({cardAmount: amount});
   }
 
+  setCardState = (key) => {
+    this.setState({cardState: true});
+    this.setState({cardID: key});
+    this.setState({clicks: this.state.clicks+1});
+  }
+
   render(){
     return (
       <div>
@@ -29,7 +38,7 @@ class App extends Component {
         {
           this.state.route === 'home' ? <LandPage setCardAmount={this.setCardAmount} onRouteChange={this.onRouteChange}/> : 
           <Scroll>
-            <GamePage cardAmount={this.state.cardAmount}/>
+            <GamePage clicks={this.state.clicks} cardID={this.state.cardID} cardAmount={this.state.cardAmount} setCardState={this.setCardState} cardState={this.state.cardState}/>
           </Scroll>
         }
       </div>
