@@ -16,7 +16,8 @@ class App extends Component {
       },
       route: 'home',
       cardAmount: 6,
-      foundPairs: 0
+      foundPairs: 0,
+      restart: false
     }
   }
 
@@ -40,7 +41,13 @@ class App extends Component {
   }
 
   restart = () => {
-    //...
+    this.setState({restart: true});
+    this.setState(prevState => {
+      let user = Object.assign({}, prevState.user);
+      user.tries = 0;
+      return { user };
+    });
+    this.setState({foundPairs: 0});
   }
 
   isGameOver = () => {
@@ -57,6 +64,7 @@ class App extends Component {
 
   setCardState = (item) => {
     if(this.state.cardItemArray.length < 2 && this.checkIfCardIsNotSame(item) && this.isGameOver()){
+      this.setState({restart: false});
       this.setState(state => state.cardItemArray.push(item));
       if(this.state.cardItemArray.length === 1){
         if(this.state.cardItemArray[0].src === item.src){
@@ -93,6 +101,8 @@ class App extends Component {
           : 
           <Scroll>
             <GamePage
+              restartState = {this.state.restart}
+              restart={this.restart}
               user={this.state.user}
               cardItemArray={this.state.cardItemArray}
               cardAmount={this.state.cardAmount} 

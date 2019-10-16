@@ -3,7 +3,7 @@ import {PicList} from './PicList';
 import Card from './Cards';
 import emptyCard from './pictures/emptyCard.png';
 
-const CardList = ({cardAmount, setCardState, cardItemArray}) => {
+const CardList = ({cardAmount, setCardState, cardItemArray, restartState}) => {
 
 	const getSource = (card) => {
 		return PicList.find(item => item.id === card.id);
@@ -18,7 +18,13 @@ const CardList = ({cardAmount, setCardState, cardItemArray}) => {
 		<div>
 		{
 			PicList.map((item, i) => {
-				if(i >= cardAmount) return;
+				if(i >= cardAmount){
+					return;
+				}else if(restartState){
+					PicList.forEach(item => {
+						item.found = false;
+					});
+				}
 				return(
 					findCard(item) || item.found ? 
 					<Card getSource={getSource} setCardState={setCardState} item={item} key={i}/>
