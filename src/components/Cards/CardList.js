@@ -4,7 +4,7 @@ import Card from './Cards';
 import emptyCard from './pictures/emptyCard.png';
 
 const CardList = ({cardAmount, setCardState, cardItemArray, restartState}) => {
-
+	
 	const getSource = (card) => {
 		return PicList.find(item => item.id === card.id);
 	}
