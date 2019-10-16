@@ -3,26 +3,27 @@ import {PicList} from './PicList';
 import Card from './Cards';
 import emptyCard from './pictures/emptyCard.png';
 
-const CardList = ({cardAmount, setCardState, cardState, cardItemArray}) => {
+const CardList = ({cardAmount, setCardState, cardItemArray}) => {
 
-	console.log(cardItemArray);
-	console.log(cardState);
+	const getSource = (card) => {
+		return PicList.find(item => item.id === card.id);
+	}
 
-	const calc = (card) => {
-		let object = cardItemArray.filter(item => (item.id === card.id));
-		if(object.length > 0) return true;
+	const findCard = (card) => {
+		let cardObject = cardItemArray.find(item => item.id === card.id);
+		if(cardObject) return true;
 	}
 
 	return (
 		<div>
 		{
 			PicList.map((item, i) => {
-				if(i >= cardAmount){return;}
+				if(i >= cardAmount) return;
 				return(
-					cardState && cardItemArray[0].id === item.id ? 
-					<Card setCardState={setCardState} cardState={cardState} item={item} key={i}/>
+					findCard(item) || item.found ? 
+					<Card getSource={getSource} setCardState={setCardState} item={item} key={i}/>
 					:
-					<Card setCardState={setCardState} cardState={cardState} item={{src: emptyCard, id:item.id}} key={i}/>
+					<Card getSource={getSource} setCardState={setCardState} item={{src: emptyCard, id:item.id}} key={i}/>
 				);
 			})
 		}

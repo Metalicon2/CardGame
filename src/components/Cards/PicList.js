@@ -1,4 +1,3 @@
-import React from 'react';
 import angular from './pictures/angular.png';
 import d3 from './pictures/d3.png';
 import jenkins from './pictures/jenkins.png';
@@ -12,74 +11,92 @@ import webpack from './pictures/webpack.png';
 export const PicList = [
 	{
 		src: angular,
-		id: 1
+		id: 1,
+		found: false
 	},
 	{
 		src: angular,
-		id: 2
+		id: 2,
+		found: false
 	},
 	{
 		src: d3,
-		id: 3
+		id: 3,
+		found: false
 	},
 	{
 		src: d3,
-		id: 4
+		id: 4,
+		found: false
 	},
 	{
 		src: jenkins,
-		id: 5
+		id: 5,
+		found: false
 	},
 	{
 		src: jenkins,
-		id: 6
+		id: 6,
+		found: false
 	},
 	{
 		src: postcss,
-		id: 7
+		id: 7,
+		found: false
 	},
 	{
 		src: postcss,
-		id: 8
+		id: 8,
+		found: false
 	},
 	{
 		src: react,
-		id: 9
+		id: 9,
+		found: false
 	},
 	{
 		src: react,
-		id: 10
+		id: 10,
+		found: false
 	},
 	{
 		src: redux,
-		id: 11
+		id: 11,
+		found: false
 	},
 	{
 		src: redux,
-		id: 12
+		id: 12,
+		found: false
 	},
 	{
 		src: sass,
-		id: 13
+		id: 13,
+		found: false
 	},
 	{
 		src: sass,
-		id: 14
+		id: 14,
+		found: false
 	},
 	{
 		src: ts,
-		id: 15
+		id: 15,
+		found: false
 	},
 	{
 		src: ts,
-		id: 16
+		id: 16,
+		found: false
 	},
 	{
 		src: webpack,
-		id: 17
+		id: 17,
+		found: false
 	},
 	{
 		src: webpack,
-		id: 18
+		id: 18,
+		found: false
 	}
 ];
