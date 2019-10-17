@@ -28,7 +28,7 @@ const Menu = ({route, setCardAmount, onRouteChange, newGame}) => {
 					<input className="b ba white grow pointer f5 pa3 ph4" 
 						   type="submit" 
 						   value="START NEW GAME" 
-						   onClick={() => newGame()}
+						   onClick={() => setCardAmount(8, 'new game')}
 				/>
 				</div>
 		</nav>

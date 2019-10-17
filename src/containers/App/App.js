@@ -10,50 +10,35 @@ class App extends Component {
     super();
     this.state = {
       cardItemArray: [],
-      user: {
-        tries: 0,
-        best: 0
-      },
+      tries: 0,
+      best: 0,
       route: 'home',
       cardAmount: 6,
       foundPairs: 0,
-      restart: false,
-      menuAmount: 0
+      restart: false
     }
   }
 
   initState = () => {
-    this.setState(prevState => {
-      let user = Object.assign({}, prevState.user);
-      user.tries = 0;
-      return { user };
-    });
+    this.setState({tries: 0});
+    this.setState({foundPairs: 0});
     localStorage.setItem('tries', 0);
   }
 
   newGame = () => {
     this.initState();
-    this.setState({foundPairs: 0});
     this.setState({restart: true});
-    this.onRouteChange('new game');
   }
 
   onRouteChange = (route) => {
+    if(route === 'play') this.restart();
     this.setState({route: route});
     localStorage.setItem('route', route);
-    console.log(this.state.route);
-    if(route === 'new game'){
-      this.setCardAmount(this.state.menuAmount, route);
-    }
   }
 
-  setCardAmount = (amount, route='') => {
-    this.setState({menuAmount: amount});
-    if(this.state.route === 'home' || route === 'new game'){
-      this.setState({cardAmount: amount});
-      localStorage.setItem('cardAmount', amount);
-      this.onRouteChange('play');
-    }
+  setCardAmount = (amount) => {
+    this.setState({cardAmount: amount});
+    localStorage.setItem('cardAmount', amount);
   }
 
   checkIfCardIsNotSame = (item) => {
@@ -62,32 +47,26 @@ class App extends Component {
         return true;
       }
       return false;
-    }else{
-      return true;
     }
+    return true;
   }
 
   restart = () => {
-    this.setState({restart: true});
     this.initState();
-    this.setState({foundPairs: 0});
+    this.setState({restart: true});
   }
 
   calcBestScore = () => {
-    if(this.state.user.best > this.state.user.tries || this.state.user.best === 0){
-      localStorage.setItem('best', this.state.user.tries);
-      this.setState(prevState => {
-        let user = Object.assign({}, prevState.user);
-        user.best = user.tries;              
-        return { user };
-      });
+    if(this.state.best > this.state.tries || this.state.best === 0){
+      console.log('finish called!');
+      localStorage.setItem('best', this.state.tries);
+      this.setState({best: this.state.tries});
     }
   }
 
   isGameOver = () => {
     if(this.state.cardAmount / this.state.foundPairs === 2){
       this.calcBestScore();
-      alert('won');
       this.initState();
       return false;
     }  
@@ -106,12 +85,7 @@ class App extends Component {
         }
         setTimeout(() => 
           {
-            this.setState(prevState => {
-              let user = Object.assign({}, prevState.user);
-              user.tries = ++user.tries; 
-              localStorage.setItem('tries', user.tries);             
-              return { user };
-            });
+            this.setState({tries: this.state.tries+1});
             this.setState({cardItemArray: []});
             this.isGameOver();
           }, 1500);
@@ -124,12 +98,8 @@ class App extends Component {
     const best = localStorage.getItem('best');
     const route = localStorage.getItem('route');
     const amount = localStorage.getItem('cardAmount');
-    this.setState(prevState => {
-      let user = Object.assign({}, prevState.user);
-      tries === null ? user.tries = 0 : user.tries = tries;
-      best === null ? user.best = 0 : user.best = best;
-      return { user };
-    });
+    tries === null ? this.setState({tries: 0}) : this.setState({tries: tries});
+    best === null ? this.setState({best: 0}) : this.setState({best: best});
     route === null ? this.onRouteChange('home') : this.onRouteChange(route);
     amount === null ? this.setState({cardAmount: 6}) : this.setState({cardAmount: amount});
   }
@@ -155,7 +125,8 @@ class App extends Component {
             <GamePage
               restartState = {this.state.restart}
               restart={this.restart}
-              user={this.state.user}
+              tries= {this.state.tries}
+              best= {this.state.best}
               cardItemArray={this.state.cardItemArray}
               cardAmount={this.state.cardAmount} 
               setCardState={this.setCardState} 
