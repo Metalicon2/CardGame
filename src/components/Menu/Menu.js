@@ -7,7 +7,7 @@ const style = {
 	display: 'inline-flex'
 }
 
-const Menu = ({route, setCardAmount, onRouteChange, newGame, cardAmount, gameOn}) => {
+const Menu = ({route, setCardAmount, onRouteChange, newGame, cardAmount}) => {
 	return(
 		route === 'home' ?
 		<nav className="shadow-3 w-100 bg-black pa3">
@@ -29,7 +29,7 @@ const Menu = ({route, setCardAmount, onRouteChange, newGame, cardAmount, gameOn}
 						   type="submit" 
 						   value="START NEW GAME" 
 						   onClick={
-						   	() => newGame()
+						   	() => newGame('menu')
 						   }
 				/>
 				</div>

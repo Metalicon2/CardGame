@@ -12,33 +12,38 @@ const App = () => {
   const [best, setBest] = useState(0);
   const [route, setRoute] = useState('home');
   const [cardAmount, setCardAmount] = useState(6);
+  const [prevCardAmount, setPrevCardAmount] = useState(6);
   const [foundPairs, setFoundPairs] = useState(0);
-  const [restart, setRestart] = useState(false);
-  const [gameOn, setGameOn] = useState(true);
+  const [resetCard, setResetCard] = useState(false);
+  const [gameOn, setGameOn] = useState(false);
+  const [playOn, setPlayOn] = useState(false);
 
   const initState = () => {
     setTries(0);
     setFoundPairs(0);
-    localStorage.setItem('tries', 0);
+    //localStorage.setItem('tries', 0);
   }
 
-  const newGame = () => {
+  const newGame = (where='landpage') => {
     initState();
-    setRestart(true);
-    onRouteChange('new game');
-    console.log(route);
+    setResetCard(true);
+    onRouteChange('play');
+    if(where === 'menu') setCardAmountFunc(prevCardAmount);
+    setGameOn(true);
+    setPlayOn(true);
   }
 
   const onRouteChange = (route) => {
     setRoute(route);
-    localStorage.setItem('route', route);
   }
 
   const setCardAmountFunc = (amount) => {
-    if(route === 'new game') alert('lol');
     setCardAmount(amount);
-    localStorage.setItem('cardAmount', amount);
   }
+
+  const setPrevCardAmountFunc = (amount) => {
+    setPrevCardAmount(amount);
+  } 
 
   const checkIfCardIsNotSame = (item) => {
     if(cardItemArray[0]){
@@ -50,15 +55,8 @@ const App = () => {
     return true;
   }
 
-  const restartFunc = () => {
-    initState();
-    setRestart(true);
-    setGameOn(true);
-  }
-
   const calcBestScore = () => {
     if(best > tries || best === 0){
-      console.log('finish called!');
       localStorage.setItem('best', tries+1);
       setBest(tries+1);
     }
@@ -66,15 +64,16 @@ const App = () => {
 
   const isGameOver = () => {
     if(cardAmount / foundPairs === 2){
-      setGameOn(false);
+      setPlayOn(false);
       calcBestScore();
       initState();
     }  
   }
 
   const setCardState = (item) => {
-    if(cardItemArray.length < 2 && checkIfCardIsNotSame(item) && gameOn){
-      setRestart(false);
+    if(cardItemArray.length < 2 && checkIfCardIsNotSame(item) && playOn){
+      console.log(playOn);
+      setResetCard(false);
       setCardItemArray([...cardItemArray, item]);
       if(cardItemArray.length === 1){
         if(cardItemArray[0].src === item.src){
@@ -84,9 +83,9 @@ const App = () => {
           item.found=true;
           setFoundPairs(foundPairs+1);
         }
+        setTries(tries+1);
         setTimeout(() => 
         {
-          setTries(tries+1);
           setCardItemArray([]);
         }, 1500);
       }
@@ -98,14 +97,22 @@ const App = () => {
     const best = localStorage.getItem('best');
     const route = localStorage.getItem('route');
     const amount = localStorage.getItem('cardAmount');
+    const gameOn = localStorage.getItem('gameOn');
+    const playOn = localStorage.getItem('playOn');
     tries === null ? setTries(0): setTries(tries);
     best === null ? setBest(0) : setBest(best);
     route === null ? onRouteChange('home') : onRouteChange(route);
     amount === null ? setCardAmount(6) : setCardAmount(amount);
+    gameOn === null ? setGameOn(false) : setGameOn(gameOn);
+    playOn === null ? setPlayOn(false) : setPlayOn(playOn);
   }, []);
 
   useEffect(() => {
-    if(gameOn) localStorage.setItem('tries', tries);
+    localStorage.setItem('tries', tries);
+    localStorage.setItem('gameOn', gameOn);
+    localStorage.setItem('playOn', playOn);
+    localStorage.setItem('route', route);
+    localStorage.setItem('cardAmount', cardAmount);
     isGameOver();
   });
 
@@ -114,23 +121,22 @@ const App = () => {
       <Menu
         newGame={newGame}
         route={route}
-        setCardAmount={setCardAmount}
+        setCardAmount={gameOn ? setPrevCardAmountFunc : setCardAmountFunc}
         onRouteChange={onRouteChange}
         cardAmount={cardAmount}
-        gameOn={gameOn}
       />
       {
         route === 'home' 
         ? 
         <LandPage 
-          setCardAmount={setCardAmount} 
-          onRouteChange={onRouteChange}
+          setCardAmount={setCardAmountFunc} 
+          newGame={newGame}
         /> 
         : 
         <Scroll>
           <GamePage
-            restartState = {restart}
-            restart={restartFunc}
+            restartState = {resetCard}
+            restart={newGame}
             tries= {tries}
             best= {best}
             cardItemArray={cardItemArray}
