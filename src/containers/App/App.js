@@ -4,6 +4,7 @@ import Menu from '../../components/Menu/Menu';
 import LandPage from '../../components/LandPage/LandPage';
 import GamePage from '../../components/GamePage/GamePage';
 import Scroll from '../../components/Scroll/Scroll';
+import {PicList} from '../../components/Cards/PicList';
 
 const App = () => {
 
@@ -17,18 +18,21 @@ const App = () => {
   const [resetCard, setResetCard] = useState(false);
   const [gameOn, setGameOn] = useState(false);
   const [playOn, setPlayOn] = useState(false);
+  const [picList, setPicList] = useState(PicList);
 
   const initState = () => {
     setTries(0);
     setFoundPairs(0);
-    //localStorage.setItem('tries', 0);
   }
 
   const newGame = (where='landpage') => {
     initState();
     setResetCard(true);
     onRouteChange('play');
-    if(where === 'menu') setCardAmountFunc(prevCardAmount);
+    if(where === 'menu') {
+      setCardAmountFunc(prevCardAmount);
+      if(cardAmount !== prevCardAmount) setBest(0);
+    }
     setGameOn(true);
     setPlayOn(true);
   }
@@ -57,7 +61,6 @@ const App = () => {
 
   const calcBestScore = () => {
     if(best > tries || best === 0){
-      localStorage.setItem('best', tries+1);
       setBest(tries+1);
     }
   }
@@ -72,7 +75,6 @@ const App = () => {
 
   const setCardState = (item) => {
     if(cardItemArray.length < 2 && checkIfCardIsNotSame(item) && playOn){
-      console.log(playOn);
       setResetCard(false);
       setCardItemArray([...cardItemArray, item]);
       if(cardItemArray.length === 1){
@@ -83,9 +85,9 @@ const App = () => {
           item.found=true;
           setFoundPairs(foundPairs+1);
         }
-        setTries(tries+1);
         setTimeout(() => 
         {
+          setTries(tries+1);
           setCardItemArray([]);
         }, 1500);
       }
@@ -99,20 +101,31 @@ const App = () => {
     const amount = localStorage.getItem('cardAmount');
     const gameOn = localStorage.getItem('gameOn');
     const playOn = localStorage.getItem('playOn');
-    tries === null ? setTries(0): setTries(tries);
+    const foundPairs = localStorage.getItem('foundPairs');
+    const resetCard = localStorage.getItem('resetCard');
+    const cardItemArray = JSON.parse(localStorage.getItem('cardItemArray'));
+    const picList = JSON.parse(localStorage.getItem('picList'));
+    tries === null ? setTries(0) : setTries(tries);
     best === null ? setBest(0) : setBest(best);
     route === null ? onRouteChange('home') : onRouteChange(route);
     amount === null ? setCardAmount(6) : setCardAmount(amount);
     gameOn === null ? setGameOn(false) : setGameOn(gameOn);
     playOn === null ? setPlayOn(false) : setPlayOn(playOn);
+    foundPairs === null ? setFoundPairs(0) : setFoundPairs(foundPairs);
+    cardItemArray === null ? setCardItemArray([]) : setCardItemArray(cardItemArray);
+    picList === null ? setPicList(PicList) : setPicList(picList);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('tries', tries);
+    playOn ? localStorage.setItem('tries', tries) : localStorage.setItem('tries', 0);
+    localStorage.setItem('best', best);
     localStorage.setItem('gameOn', gameOn);
     localStorage.setItem('playOn', playOn);
     localStorage.setItem('route', route);
     localStorage.setItem('cardAmount', cardAmount);
+    localStorage.setItem('foundPairs', foundPairs);
+    localStorage.setItem('cardItemArray', JSON.stringify(cardItemArray));
+    localStorage.setItem('picList', JSON.stringify(picList));
     isGameOver();
   });
 
@@ -141,7 +154,8 @@ const App = () => {
             best= {best}
             cardItemArray={cardItemArray}
             cardAmount={cardAmount} 
-            setCardState={setCardState} 
+            setCardState={setCardState}
+            picList={picList}
           />
         </Scroll>
       }
