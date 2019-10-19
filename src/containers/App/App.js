@@ -1,49 +1,48 @@
-import React, { Component } from 'react';
+import React, {useState, useEffect} from 'react';
 import './App.css';
 import Menu from '../../components/Menu/Menu';
 import LandPage from '../../components/LandPage/LandPage';
 import GamePage from '../../components/GamePage/GamePage';
 import Scroll from '../../components/Scroll/Scroll';
 
-class App extends Component {
-  constructor(){
-    super();
-    this.state = {
-      cardItemArray: [],
-      tries: 0,
-      best: 0,
-      route: 'home',
-      cardAmount: 6,
-      foundPairs: 0,
-      restart: false
-    }
-  }
+const App = () => {
 
-  initState = () => {
-    this.setState({tries: 0});
-    this.setState({foundPairs: 0});
+  const [cardItemArray, setCardItemArray] = useState([]);
+  const [tries, setTries] = useState(0);
+  const [best, setBest] = useState(0);
+  const [route, setRoute] = useState('home');
+  const [cardAmount, setCardAmount] = useState(6);
+  const [foundPairs, setFoundPairs] = useState(0);
+  const [restart, setRestart] = useState(false);
+  const [gameOn, setGameOn] = useState(true);
+
+  const initState = () => {
+    setTries(0);
+    setFoundPairs(0);
     localStorage.setItem('tries', 0);
   }
 
-  newGame = () => {
-    this.initState();
-    this.setState({restart: true});
+  const newGame = () => {
+    initState();
+    setRestart(true);
+    onRouteChange('new game');
+    console.log(route);
   }
 
-  onRouteChange = (route) => {
-    if(route === 'play') this.restart();
-    this.setState({route: route});
+  const onRouteChange = (route) => {
+    setRoute(route);
     localStorage.setItem('route', route);
   }
 
-  setCardAmount = (amount) => {
-    this.setState({cardAmount: amount});
+  const setCardAmountFunc = (amount) => {
+    if(route === 'new game') alert('lol');
+    setCardAmount(amount);
     localStorage.setItem('cardAmount', amount);
   }
 
-  checkIfCardIsNotSame = (item) => {
-    if(this.state.cardItemArray[0]){
-      if(item.id !== this.state.cardItemArray[0].id){
+  const checkIfCardIsNotSame = (item) => {
+    if(cardItemArray[0]){
+      if(item.id !== cardItemArray[0].id){
         return true;
       }
       return false;
@@ -51,91 +50,97 @@ class App extends Component {
     return true;
   }
 
-  restart = () => {
-    this.initState();
-    this.setState({restart: true});
+  const restartFunc = () => {
+    initState();
+    setRestart(true);
+    setGameOn(true);
   }
 
-  calcBestScore = () => {
-    if(this.state.best > this.state.tries || this.state.best === 0){
+  const calcBestScore = () => {
+    if(best > tries || best === 0){
       console.log('finish called!');
-      localStorage.setItem('best', this.state.tries);
-      this.setState({best: this.state.tries});
+      localStorage.setItem('best', tries+1);
+      setBest(tries+1);
     }
   }
 
-  isGameOver = () => {
-    if(this.state.cardAmount / this.state.foundPairs === 2){
-      this.calcBestScore();
-      this.initState();
-      return false;
+  const isGameOver = () => {
+    if(cardAmount / foundPairs === 2){
+      setGameOn(false);
+      calcBestScore();
+      initState();
     }  
-    return true;
   }
 
-  setCardState = (item) => {
-    if(this.state.cardItemArray.length < 2 && this.checkIfCardIsNotSame(item) && this.isGameOver()){
-      this.setState({restart: false});
-      this.setState(state => state.cardItemArray.push(item));
-      if(this.state.cardItemArray.length === 1){
-        if(this.state.cardItemArray[0].src === item.src){
-          this.setState(state => state.cardItemArray[0].found = true);
-          item.found = true;
-          this.setState({foundPairs: this.state.foundPairs+1});
+  const setCardState = (item) => {
+    if(cardItemArray.length < 2 && checkIfCardIsNotSame(item) && gameOn){
+      setRestart(false);
+      setCardItemArray([...cardItemArray, item]);
+      if(cardItemArray.length === 1){
+        if(cardItemArray[0].src === item.src){
+          let newArr = [...cardItemArray];
+          newArr[0].found = true;
+          setCardItemArray(newArr);
+          item.found=true;
+          setFoundPairs(foundPairs+1);
         }
         setTimeout(() => 
-          {
-            this.setState({tries: this.state.tries+1});
-            this.setState({cardItemArray: []});
-            this.isGameOver();
-          }, 1500);
+        {
+          setTries(tries+1);
+          setCardItemArray([]);
+        }, 1500);
       }
     }
   }
 
-  componentDidMount(){
+  useEffect(() => {
     const tries = localStorage.getItem('tries');
     const best = localStorage.getItem('best');
     const route = localStorage.getItem('route');
     const amount = localStorage.getItem('cardAmount');
-    tries === null ? this.setState({tries: 0}) : this.setState({tries: tries});
-    best === null ? this.setState({best: 0}) : this.setState({best: best});
-    route === null ? this.onRouteChange('home') : this.onRouteChange(route);
-    amount === null ? this.setState({cardAmount: 6}) : this.setState({cardAmount: amount});
-  }
+    tries === null ? setTries(0): setTries(tries);
+    best === null ? setBest(0) : setBest(best);
+    route === null ? onRouteChange('home') : onRouteChange(route);
+    amount === null ? setCardAmount(6) : setCardAmount(amount);
+  }, []);
 
-  render(){
-    return (
-      <div>
-        <Menu
-          newGame={this.newGame}
-          route={this.state.route}
-          setCardAmount={this.setCardAmount}
-          onRouteChange={this.onRouteChange}
-        />
-        {
-          this.state.route === 'home' 
-          ? 
-          <LandPage 
-            setCardAmount={this.setCardAmount} 
-            onRouteChange={this.onRouteChange}
-          /> 
-          : 
-          <Scroll>
-            <GamePage
-              restartState = {this.state.restart}
-              restart={this.restart}
-              tries= {this.state.tries}
-              best= {this.state.best}
-              cardItemArray={this.state.cardItemArray}
-              cardAmount={this.state.cardAmount} 
-              setCardState={this.setCardState} 
-            />
-          </Scroll>
-        }
-      </div>
-    );
-  }
+  useEffect(() => {
+    if(gameOn) localStorage.setItem('tries', tries);
+    isGameOver();
+  });
+
+  return (
+    <div>
+      <Menu
+        newGame={newGame}
+        route={route}
+        setCardAmount={setCardAmount}
+        onRouteChange={onRouteChange}
+        cardAmount={cardAmount}
+        gameOn={gameOn}
+      />
+      {
+        route === 'home' 
+        ? 
+        <LandPage 
+          setCardAmount={setCardAmount} 
+          onRouteChange={onRouteChange}
+        /> 
+        : 
+        <Scroll>
+          <GamePage
+            restartState = {restart}
+            restart={restartFunc}
+            tries= {tries}
+            best= {best}
+            cardItemArray={cardItemArray}
+            cardAmount={cardAmount} 
+            setCardState={setCardState} 
+          />
+        </Scroll>
+      }
+    </div>
+  );
 }
 
 export default App;
