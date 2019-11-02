@@ -5,48 +5,62 @@ import LandPage from '../../components/LandPage/LandPage';
 import GamePage from '../../components/GamePage/GamePage';
 import Scroll from '../../components/Scroll/Scroll';
 import {PicList} from '../../components/Cards/PicList';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  incrementTryAction,
+  resetTryAction,
+  setBestAction,
+  setGameOnAction,
+  setPlayOnAction,
+  setFoundPairs,
+  incrementFoundPairs,
+  setCardAmountAction,
+  setPrevCardAmountAction,
+  setResetCardAction,
+  setCardItemArrayAction,
+  setRouteAction
+} from '../../actions/actions';
 
 const App = () => {
 
-  const [cardItemArray, setCardItemArray] = useState([]);
-  const [tries, setTries] = useState(0);
-  const [best, setBest] = useState(0);
-  const [route, setRoute] = useState('home');
-  const [cardAmount, setCardAmount] = useState(6);
-  const [prevCardAmount, setPrevCardAmount] = useState(6);
-  const [foundPairs, setFoundPairs] = useState(0);
-  const [resetCard, setResetCard] = useState(false);
-  const [gameOn, setGameOn] = useState(false);
-  const [playOn, setPlayOn] = useState(false);
+  const dispatch = useDispatch();
+  const tries = useSelector(state => state.tries);
+  const best = useSelector(state => state.best);
+  const gameOn = useSelector(state => state.gameOn);
+  const playOn = useSelector(state => state.playOn);
+  const foundPairs = useSelector(state => state.foundPairs);
+  const cardAmount = useSelector(state => state.cardAmount);
+  const prevCardAmount = useSelector(state => state.prevCardAmount);
+  const resetCard = useSelector(state => state.resetCard);
+  const cardItemArray = useSelector(state => state.cardItemArray);
+  const route = useSelector(state => state.route);
   const [picList, setPicList] = useState(PicList);
 
   const initState = () => {
-    setTries(0);
-    setFoundPairs(0);
+    dispatch(resetTryAction());
+    dispatch(setFoundPairs(0));
   }
 
   const newGame = (where='landpage') => {
     initState();
-    setResetCard(true);
+    dispatch(setResetCardAction(true));
     onRouteChange('play');
-    if(where === 'menu') {
-      setCardAmountFunc(prevCardAmount);
-      if(cardAmount !== prevCardAmount) setBest(0);
-    }
-    setGameOn(true);
-    setPlayOn(true);
+    if(where === 'menu') setCardAmountFunc(prevCardAmount);
+    if(cardAmount !== prevCardAmount) dispatch(setBestAction(0));
+    dispatch(setGameOnAction(true));
+    dispatch(setPlayOnAction(true));
   }
 
   const onRouteChange = (route) => {
-    setRoute(route);
+    dispatch(setRouteAction(route));
   }
 
   const setCardAmountFunc = (amount) => {
-    setCardAmount(amount);
+    dispatch(setCardAmountAction(parseInt(amount)));
   }
 
   const setPrevCardAmountFunc = (amount) => {
-    setPrevCardAmount(amount);
+    dispatch(setPrevCardAmountAction(parseInt(amount)));
   } 
 
   const checkIfCardIsNotSame = (item) => {
@@ -61,13 +75,13 @@ const App = () => {
 
   const calcBestScore = () => {
     if(best > tries || best === 0){
-      setBest(tries+1);
+      dispatch(setBestAction(tries));
     }
   }
 
   const isGameOver = () => {
     if(cardAmount / foundPairs === 2){
-      setPlayOn(false);
+      dispatch(setPlayOnAction(false));
       calcBestScore();
       initState();
     }  
@@ -75,56 +89,31 @@ const App = () => {
 
   const setCardState = (item) => {
     if(cardItemArray.length < 2 && checkIfCardIsNotSame(item) && playOn){
-      setResetCard(false);
-      setCardItemArray([...cardItemArray, item]);
+      dispatch(setResetCardAction(false));
+      dispatch(setCardItemArrayAction([...cardItemArray, item]));
       if(cardItemArray.length === 1){
         if(cardItemArray[0].src === item.src){
           let newArr = [...cardItemArray];
           newArr[0].found = true;
-          setCardItemArray(newArr);
+          dispatch(setCardItemArrayAction(newArr));
           item.found=true;
-          setFoundPairs(foundPairs+1);
+          dispatch(incrementFoundPairs(1));
         }
+        dispatch(incrementTryAction(1));
         setTimeout(() => 
         {
-          setTries(tries+1);
-          setCardItemArray([]);
+          dispatch(setCardItemArrayAction([]));
         }, 1500);
       }
     }
   }
 
   useEffect(() => {
-    const tries = localStorage.getItem('tries');
-    const best = localStorage.getItem('best');
-    const route = localStorage.getItem('route');
-    const amount = localStorage.getItem('cardAmount');
-    const gameOn = localStorage.getItem('gameOn');
-    const playOn = localStorage.getItem('playOn');
-    const foundPairs = localStorage.getItem('foundPairs');
-    const resetCard = localStorage.getItem('resetCard');
-    const cardItemArray = JSON.parse(localStorage.getItem('cardItemArray'));
     const picList = JSON.parse(localStorage.getItem('picList'));
-    tries === null ? setTries(0) : setTries(tries);
-    best === null ? setBest(0) : setBest(best);
-    route === null ? onRouteChange('home') : onRouteChange(route);
-    amount === null ? setCardAmount(6) : setCardAmount(amount);
-    gameOn === null ? setGameOn(false) : setGameOn(gameOn);
-    playOn === null ? setPlayOn(false) : setPlayOn(playOn);
-    foundPairs === null ? setFoundPairs(0) : setFoundPairs(foundPairs);
-    cardItemArray === null ? setCardItemArray([]) : setCardItemArray(cardItemArray);
     picList === null ? setPicList(PicList) : setPicList(picList);
   }, []);
 
   useEffect(() => {
-    playOn ? localStorage.setItem('tries', tries) : localStorage.setItem('tries', 0);
-    localStorage.setItem('best', best);
-    localStorage.setItem('gameOn', gameOn);
-    localStorage.setItem('playOn', playOn);
-    localStorage.setItem('route', route);
-    localStorage.setItem('cardAmount', cardAmount);
-    localStorage.setItem('foundPairs', foundPairs);
-    localStorage.setItem('cardItemArray', JSON.stringify(cardItemArray));
     localStorage.setItem('picList', JSON.stringify(picList));
     isGameOver();
   });
